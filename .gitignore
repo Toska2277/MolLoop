@@ -1,0 +1,24 @@
+# 虚拟环境
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 密钥：绝对不要提交
+configs/llm.json
+.env
+
+# 大文件：由 README 的下载命令重新获取
+data/qm9.csv
+data/*.parquet
+data/geom/*.npz
+features/*.parquet
+train/preds_*.csv
+eval/*.parquet
+eval/preds_stack.csv
+
+# 运行日志
+logs/
+
+# 模型文件：可由 train/fit_final.py 重新生成
+models/

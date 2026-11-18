@@ -1,0 +1,27 @@
+{
+  "model": "rf",
+  "n_samples": 133802,
+  "n_features": 217,
+  "folds": 5,
+  "oof_mae": 0.1622,
+  "elapsed_sec": 192.6,
+  "config": {
+    "target": "gap",
+    "unit": "eV",
+    "seed": 42,
+    "folds": 5,
+    "rf": {
+      "n_estimators": 200,
+      "max_features": 0.5,
+      "min_samples_leaf": 2
+    },
+    "xgb": {
+      "n_estimators": 400,
+      "learning_rate": 0.05,
+      "max_depth": 6,
+      "subsample": 0.8,
+      "colsample_bytree": 0.6
+    },
+    "note": "此文件是 Agent 自循环唯一允许修改的入口，每轮改动都会写入 logs/"
+  }
+}

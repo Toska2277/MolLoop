@@ -1,0 +1,12 @@
+{
+  "window_eV": [
+    5.5,
+    6.5
+  ],
+  "n_after_predict": 39855,
+  "n_after_ad": 38097,
+  "n_final": 40,
+  "n_scaffolds": 40,
+  "median_abs_err_eV": 0.021,
+  "elapsed_sec": 0.3
+}

@@ -1,0 +1,21 @@
+dimension,model,bin,count,MAE,MedAE
+atom_count,rf,6-7 atoms,3811,0.1457,0.1015
+atom_count,rf,8-9 atoms,129813,0.1665,0.1168
+atom_count,rf,<=5 atoms,178,0.2868,0.1646
+ring_count,rf,0 ring,13998,0.1565,0.0932
+ring_count,rf,1 ring,53320,0.1641,0.1128
+ring_count,rf,>=2 rings,66484,0.1698,0.1236
+molecular_weight,rf,Q1 light,33532,0.1631,0.114
+molecular_weight,rf,Q2,35236,0.1684,0.1202
+molecular_weight,rf,Q3,32669,0.1621,0.1141
+molecular_weight,rf,Q4 heavy,32365,0.1708,0.1167
+atom_count,xgb,6-7 atoms,3811,0.1803,0.1398
+atom_count,xgb,8-9 atoms,129813,0.2063,0.1589
+atom_count,xgb,<=5 atoms,178,0.3058,0.19
+ring_count,xgb,0 ring,13998,0.1962,0.141
+ring_count,xgb,1 ring,53320,0.2044,0.1555
+ring_count,xgb,>=2 rings,66484,0.2087,0.1645
+molecular_weight,xgb,Q1 light,33532,0.2086,0.1614
+molecular_weight,xgb,Q2,35236,0.2112,0.1669
+molecular_weight,xgb,Q3,32669,0.202,0.1567
+molecular_weight,xgb,Q4 heavy,32365,0.2002,0.1482

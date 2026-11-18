@@ -1,0 +1,6 @@
+{
+  "api_key": "在这里填你的 Key",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-chat",
+  "_note": "把本文件复制为 configs/llm.json 后填写 api_key 即可，llm.json 不会提交到仓库"
+}

@@ -1,0 +1,1027 @@
+{
+ "c1ccc(cc1)O": {
+  "zh": "苯酚",
+  "en": "phenol",
+  "f": "C6H6O"
+ },
+ "CC(=O)Oc1ccccc1C(=O)O": {
+  "zh": "2-乙酰氧基苯甲酸",
+  "en": "2-(acetyloxy)benzoic acid",
+  "f": "C9H8O4"
+ },
+ "c1cc[nH]c(=O)c(=O)c1": {
+  "zh": "1H-氮杂䓬-2,3-二酮",
+  "en": "1H-azepine-2,3-dione",
+  "f": "C6H5NO2"
+ },
+ "c1ccccc1": {
+  "zh": "苯",
+  "en": "benzene",
+  "f": "C6H6"
+ },
+ "c1ccncc1": {
+  "zh": "吡啶",
+  "en": "pyridine",
+  "f": "C5H5N"
+ },
+ "c1ccoc1": {
+  "zh": "呋喃",
+  "en": "furan",
+  "f": "C4H4O"
+ },
+ "c1cc[nH]c1": {
+  "zh": "1H-吡咯",
+  "en": "1H-pyrrole",
+  "f": "C4H5N"
+ },
+ "CCO": {
+  "zh": "乙醇",
+  "en": "ethanol",
+  "f": "C2H6O"
+ },
+ "c1ccc(cc1)N": {
+  "zh": "苯胺",
+  "en": "aniline",
+  "f": "C6H7N"
+ },
+ "CCCC": {
+  "zh": "丁烷",
+  "en": "butane",
+  "f": "C4H10"
+ },
+ "C1CC1": {
+  "zh": "环丙烷",
+  "en": "cyclopropane",
+  "f": "C3H6"
+ },
+ "C1CCC1": {
+  "zh": "环丁烷",
+  "en": "cyclobutane",
+  "f": "C4H8"
+ },
+ "c1ccc2c(c1)cc[nH]2": {
+  "zh": "1H-吲哚",
+  "en": "1H-indole",
+  "f": "C8H7N"
+ },
+ "C1CCC(=O)CC1": {
+  "zh": "环己酮",
+  "en": "cyclohexanone",
+  "f": "C6H10O"
+ },
+ "C#N": {
+  "zh": "甲腈",
+  "en": "formonitrile",
+  "f": "CHN"
+ },
+ "Cc1ccccc1": {
+  "zh": "甲苯",
+  "en": "toluene",
+  "f": "C7H8"
+ },
+ "CNc1cc(on1)C=O": {
+  "zh": "3-(甲氨基)-1,2-噁唑-5-甲醛",
+  "en": "3-(methylamino)-1,2-oxazole-5-carbaldehyde",
+  "f": "C5H6N2O2"
+ },
+ "C[NH2+]C[C-]1OC(=O)C=C1": {
+  "zh": "5-[(甲基铵基)甲基]-2-氧代-2,5-二氢呋喃-5-负离子",
+  "en": "5-[(methylazaniumyl)methyl]-2-oxo-2,5-dihydrofuran-5-ide",
+  "f": "C6H9NO2"
+ },
+ "N=C1OC=NC(C=O)=N1": {
+  "zh": "2-亚氨基-2H-1,3,5-噁二嗪-4-甲醛",
+  "en": "2-imino-2H-1,3,5-oxadiazine-4-carbaldehyde",
+  "f": "C4H3N3O2"
+ },
+ "C#CC1=CC(=O)CNC1": {
+  "zh": "5-乙炔基-1,2,3,6-四氢吡啶-3-酮",
+  "en": "5-ethynyl-1,2,3,6-tetrahydropyridin-3-one",
+  "f": "C7H7NO"
+ },
+ "CN1CC2OC2C(=O)C1": {
+  "zh": "3-甲基-7-氧杂-3-氮杂双环[4.1.0]庚烷-5-酮",
+  "en": "3-methyl-7-oxa-3-azabicyclo[4.1.0]heptan-5-one",
+  "f": "C6H9NO2"
+ },
+ "OC1CN2CCC(=O)C12": {
+  "zh": "6-羟基-1-氮杂双环[3.2.0]庚-4-酮",
+  "en": "6-hydroxy-1-azabicyclo[3.2.0]heptan-4-one",
+  "f": "C6H9NO2"
+ },
+ "OCCC1CC(=O)C=C1": {
+  "zh": "4-(2-羟乙基)环戊-2-烯-1-酮",
+  "en": "4-(2-hydroxyethyl)cyclopent-2-en-1-one",
+  "f": "C7H10O2"
+ },
+ "O=C1CN=CN2CCC12": {
+  "zh": "1,3-二氮杂双环[4.2.0]辛-2-烯-5-酮",
+  "en": "1,3-diazabicyclo[4.2.0]oct-2-en-5-one",
+  "f": "C6H8N2O"
+ },
+ "CC(C)C1CC(O)C1=O": {
+  "zh": "2-羟基-4-(丙-2-基)环丁-1-酮",
+  "en": "2-hydroxy-4-(propan-2-yl)cyclobutan-1-one",
+  "f": "C7H12O2"
+ },
+ "CC1OC1(C)C(O)C=O": {
+  "zh": "3,4-环氧-2-羟基-3-甲基戊醛",
+  "en": "3,4-epoxy-2-hydroxy-3-methylpentanal",
+  "f": "C6H10O3"
+ },
+ "CC(=O)C1CCOC=N1": {
+  "zh": "1-(5,6-二氢-4H-1,3-噁嗪-4-基)乙酮",
+  "en": "1-(5,6-dihydro-4H-1,3-oxazin-4-yl)ethanone",
+  "f": "C6H9NO2"
+ },
+ "COCC(=O)NC=O": {
+  "zh": "N-甲酰基-2-甲氧基乙酰胺",
+  "en": "N-formyl-2-methoxyacetamide",
+  "f": "C4H7NO3"
+ },
+ "C(C=O)NC=O": {
+  "zh": "N-(2-氧代乙基)甲酰胺",
+  "en": "N-(2-oxoethyl)formamide",
+  "f": "C3H5NO2"
+ },
+ "OCC(O)(C=O)C#N": {
+  "zh": "2-甲酰基-2,3-二羟基丙腈",
+  "en": "2-formyl-2,3-dihydroxypropanenitrile",
+  "f": "C4H5NO3"
+ },
+ "FC1=CC(=N)N=C(F)O1": {
+  "zh": "2,6-二氟-4H-1,3-噁嗪-4-亚胺",
+  "en": "2,6-difluoro-4H-1,3-oxazin-4-imine",
+  "f": "C4H2F2N2O"
+ },
+ "COCCc1c[nH]nn1": {
+  "zh": "4-(2-甲氧基乙基)-1H-1,2,3-三唑",
+  "en": "4-(2-methoxyethyl)-1H-1,2,3-triazole",
+  "f": "C5H9N3O"
+ },
+ "COC1C2C3CN=C1N23": {
+  "zh": "7-甲氧基-1,4-二氮杂三环[3.2.0.0^{2,6}]庚-4-烯",
+  "en": "7-methoxy-1,4-diazatricyclo[3.2.0.0^{2,6}]hept-4-ene",
+  "f": "C6H8N2O"
+ },
+ "Cc1c[nH]c(n1)OC": {
+  "zh": "2-甲氧基-4-甲基-1H-咪唑",
+  "en": "2-methoxy-4-methyl-1H-imidazole",
+  "f": "C5H8N2O"
+ },
+ "CC1=CC2OC1CCO2": {
+  "zh": "6-甲基-2,8-二氧杂双环[3.2.1]辛-6-烯",
+  "en": "6-methyl-2,8-dioxabicyclo[3.2.1]oct-6-ene",
+  "f": "C7H10O2"
+ },
+ "O=C1NC(C#C)C2OC12": {
+  "zh": "4-乙炔基-6-氧杂-3-氮杂双环[3.1.0]己-2-酮",
+  "en": "4-ethynyl-6-oxa-3-azabicyclo[3.1.0]hexan-2-one",
+  "f": "C6H5NO2"
+ },
+ "CC1(CCC(=NO)C1)C": {
+  "zh": "3,3-二甲基环戊酮肟",
+  "en": "3,3-dimethylcyclopentanone oxime",
+  "f": "C7H13NO"
+ },
+ "O=C1CCCC2CC2O1": {
+  "zh": "2-氧杂双环[5.1.0]辛烷-3-酮",
+  "en": "2-oxabicyclo[5.1.0]octan-3-one",
+  "f": "C7H10O2"
+ },
+ "C1CN(C1=O)CCCO": {
+  "zh": "1-(3-羟丙基)氮杂环丁烷-2-酮",
+  "en": "1-(3-hydroxypropyl)azetidin-2-one",
+  "f": "C6H11NO2"
+ },
+ "N=C1OCC(=O)CC=C1": {
+  "zh": "7-亚氨基-1-氧杂环庚-5-烯-3-酮",
+  "en": "7-imino-1-oxacyclohept-5-en-3-one",
+  "f": "C6H7NO2"
+ },
+ "CC(OC=O)C(O)CO": {
+  "zh": "3,4-二羟基丁-2-基甲酸酯",
+  "en": "3,4-dihydroxybutan-2-yl formate",
+  "f": "C5H10O4"
+ },
+ "CCOCC#CC1CC1": {
+  "zh": "1-环丙基-3-乙氧基丙-1-炔",
+  "en": "1-cyclopropyl-3-ethoxyprop-1-yne",
+  "f": "C8H12O"
+ },
+ "CCC(C)C1OC1C#C": {
+  "zh": "2-(丁-2-基)-3-乙炔基环氧乙烷",
+  "en": "2-(butan-2-yl)-3-ethynyloxirane",
+  "f": "C8H12O"
+ },
+ "c1(=O)c(nonn1)F": {
+  "zh": "5-氟-4H-1,2,3,6-噁三嗪-4-酮",
+  "en": "5-fluoro-4H-1,2,3,6-oxatriazin-4-one",
+  "f": "C2FN3O2"
+ },
+ "CC1=NCC2C(O)C2O1": {
+  "zh": "3-甲基-2-氧杂-4-氮杂双环[4.1.0]庚-3-烯-7-醇",
+  "en": "3-methyl-2-oxa-4-azabicyclo[4.1.0]hept-3-en-7-ol",
+  "f": "C6H9NO2"
+ },
+ "CCC(CC#N)C1CO1": {
+  "zh": "3-(氧杂环丙烷-2-基)戊腈",
+  "en": "3-(oxiran-2-yl)pentanenitrile",
+  "f": "C7H11NO"
+ },
+ "N=C1NN=NC(=O)N=C1": {
+  "zh": "7-亚氨基-1,2,3,5-四氮杂环庚-2,5-二烯-4-酮",
+  "en": "7-imino-1,2,3,5-tetraazacyclohepta-2,5-dien-4-one",
+  "f": "C3H3N5O"
+ },
+ "O=COCC12CCC1N2": {
+  "zh": "甲酸[(5-氮杂双环[2.1.0]戊烷-1-基)甲基]酯",
+  "en": "(5-azabicyclo[2.1.0]pentan-1-yl)methyl formate",
+  "f": "C6H9NO2"
+ },
+ "OC12CCC(CC1)CC2": {
+  "zh": "双环[2.2.2]辛烷-1-醇",
+  "en": "bicyclo[2.2.2]octan-1-ol",
+  "f": "C8H14O"
+ },
+ "OCC1(O)C2C3CN2C13": {
+  "zh": "3-(羟甲基)-1-氮杂三环[2.2.0.0^{2,5}]己烷-3-醇",
+  "en": "3-(hydroxymethyl)-1-azatricyclo[2.2.0.0^{2,5}]hexan-3-ol",
+  "f": "C6H9NO2"
+ },
+ "CCOC1CCC(C)O1": {
+  "zh": "2-乙氧基-5-甲基氧杂环戊烷",
+  "en": "2-ethoxy-5-methyloxolane",
+  "f": "C7H14O2"
+ },
+ "CC(C)(C#N)C1CO1": {
+  "zh": "2-甲基-2-(环氧乙烷-2-基)丙腈",
+  "en": "2-methyl-2-(oxiran-2-yl)propanenitrile",
+  "f": "C6H9NO"
+ },
+ "COC1(C)CCC11CN1": {
+  "zh": "4-甲氧基-4-甲基-1-氮杂螺[2.3]己烷",
+  "en": "4-methoxy-4-methyl-1-azaspiro[2.3]hexane",
+  "f": "C7H13NO"
+ },
+ "CC(C)C1(CO1)C(C)C": {
+  "zh": "2,2-二(丙-2-基)氧杂环丙烷",
+  "en": "2,2-di(propan-2-yl)oxirane",
+  "f": "C8H16O"
+ },
+ "CCC12CC1C(C)OC2": {
+  "zh": "1-乙基-4-甲基-3-氧杂二环[3.1.0]己烷",
+  "en": "1-ethyl-4-methyl-3-oxabicyclo[3.1.0]hexane",
+  "f": "C8H14O"
+ },
+ "CC1(CC1O)C1CC1O": {
+  "zh": "2-(2-羟基环丙基)-2-甲基环丙烷-1-醇",
+  "en": "2-(2-hydroxycyclopropyl)-2-methylcyclopropan-1-ol",
+  "f": "C7H12O2"
+ },
+ "COCCOCC1CC1": {
+  "zh": "[(2-甲氧基乙氧基)甲基]环丙烷",
+  "en": "[(2-methoxyethoxy)methyl]cyclopropane",
+  "f": "C7H14O2"
+ },
+ "COC1C2C(C)C1C2C": {
+  "zh": "2-甲氧基-4,5-二甲基双环[1.1.1]戊烷",
+  "en": "2-methoxy-4,5-dimethylbicyclo[1.1.1]pentane",
+  "f": "C8H14O"
+ },
+ "CC1CCC(C(C)C)C(O)C1": {
+  "zh": "5-甲基-2-(丙-2-基)环己-1-醇",
+  "en": "5-methyl-2-(propan-2-yl)cyclohexan-1-ol",
+  "f": "C10H20O"
+ },
+ "O=CO": {
+  "zh": "甲酸",
+  "en": "methanoic acid",
+  "f": "CH2O2"
+ },
+ "CC(=O)O": {
+  "zh": "乙酸",
+  "en": "ethanoic acid",
+  "f": "C2H4O2"
+ },
+ "CCC(=O)O": {
+  "zh": "丙酸",
+  "en": "propanoic acid",
+  "f": "C3H6O2"
+ },
+ "CC1CCC2(CO2)CC1": {
+  "zh": "6-甲基-1-氧杂螺[2.5]辛烷",
+  "en": "6-methyl-1-oxaspiro[2.5]octane",
+  "f": "C8H14O"
+ },
+ "O=C(O)C(=O)O": {
+  "zh": "乙二酸",
+  "en": "ethanedioic acid",
+  "f": "C2H2O4"
+ },
+ "CC(O)C(=O)O": {
+  "zh": "2-羟基丙酸",
+  "en": "2-hydroxypropanoic acid",
+  "f": "C3H6O3"
+ },
+ "O=C(O)C(O)C(O)C(=O)O": {
+  "zh": "2,3-二羟基丁二酸",
+  "en": "2,3-dihydroxybutanedioic acid",
+  "f": "C4H6O6"
+ },
+ "O=C(O)CC(O)C(=O)O": {
+  "zh": "2-羟基丁二酸",
+  "en": "2-hydroxybutanedioic acid",
+  "f": "C4H6O5"
+ },
+ "CC12CCC(CC1=O)C2(C)C": {
+  "zh": "1,7,7-三甲基二环[2.2.1]庚-2-酮",
+  "en": "1,7,7-trimethylbicyclo[2.2.1]heptan-2-one",
+  "f": "C10H16O"
+ },
+ "O=C(O)c1ccccc1": {
+  "zh": "苯甲酸",
+  "en": "benzoic acid",
+  "f": "C7H6O2"
+ },
+ "O=C(O)c1ccccc1O": {
+  "zh": "2-羟基苯甲酸",
+  "en": "2-hydroxybenzoic acid",
+  "f": "C7H6O3"
+ },
+ "O=C(O)CC(O)(CC(=O)O)C(=O)O": {
+  "zh": "2-羟基丙烷-1,2,3-三羧酸",
+  "en": "2-hydroxypropane-1,2,3-tricarboxylic acid",
+  "f": "C6H8O7"
+ },
+ "COC(=O)c1ccccc1": {
+  "zh": "苯甲酸甲酯",
+  "en": "methyl benzoate",
+  "f": "C8H8O2"
+ },
+ "O=C(O)C=Cc1ccccc1": {
+  "zh": "3-苯基丙-2-烯酸",
+  "en": "3-phenylprop-2-enoic acid",
+  "f": "C9H8O2"
+ },
+ "C=CC(=O)O": {
+  "zh": "丙-2-烯酸",
+  "en": "prop-2-enoic acid",
+  "f": "C3H4O2"
+ },
+ "COC(=O)c1ccccc1O": {
+  "zh": "2-羟基苯甲酸甲酯",
+  "en": "methyl 2-hydroxybenzoate",
+  "f": "C8H8O3"
+ },
+ "Nc1nc(N)nc(N)n1": {
+  "zh": "1,3,5-三嗪-2,4,6-三胺",
+  "en": "1,3,5-triazine-2,4,6-triamine",
+  "f": "C3H6N6"
+ },
+ "C1CCNCC1": {
+  "zh": "哌啶",
+  "en": "piperidine",
+  "f": "C5H11N"
+ },
+ "c1ccc2ncccc2c1": {
+  "zh": "喹啉",
+  "en": "quinoline",
+  "f": "C9H7N"
+ },
+ "c1ccc2cnccc2c1": {
+  "zh": "异喹啉",
+  "en": "isoquinoline",
+  "f": "C9H7N"
+ },
+ "c1ccc2c(c1)[nH]c1ccccc12": {
+  "zh": "9H-咔唑",
+  "en": "9H-carbazole",
+  "f": "C12H9N"
+ },
+ "COC1CC(C)C(C)O1": {
+  "zh": "5-甲氧基-2,3-二甲基氧杂环戊烷",
+  "en": "5-methoxy-2,3-dimethyloxolane",
+  "f": "C7H14O2"
+ },
+ "Nc1ncnc2[nH]cnc12": {
+  "zh": "9H-嘌呤-6-胺",
+  "en": "9H-purin-6-amine",
+  "f": "C5H5N5"
+ },
+ "c1ccsc1": {
+  "zh": "噻吩",
+  "en": "thiophene",
+  "f": "C4H4S"
+ },
+ "CN1CCCC1c1cccnc1": {
+  "zh": "3-(1-甲基吡咯烷-2-基)吡啶",
+  "en": "3-(1-methylpyrrolidin-2-yl)pyridine",
+  "f": "C10H14N2"
+ },
+ "CC12CC3CCC1OC23": {
+  "zh": "8-甲基-2-氧杂三环[4.2.0.0^{3,8}]辛烷",
+  "en": "8-methyl-2-oxatricyclo[4.2.0.0^{3,8}]octane",
+  "f": "C8H12O"
+ },
+ "c1cscn1": {
+  "zh": "1,3-噻唑",
+  "en": "1,3-thiazole",
+  "f": "C3H3NS"
+ },
+ "C=Cc1ccccc1": {
+  "zh": "乙烯基苯",
+  "en": "ethenylbenzene",
+  "f": "C8H8"
+ },
+ "c1ccc(-c2ccccc2)cc1": {
+  "zh": "联苯",
+  "en": "biphenyl",
+  "f": "C12H10"
+ },
+ "c1ccc2ccccc2c1": {
+  "zh": "萘",
+  "en": "naphthalene",
+  "f": "C10H8"
+ },
+ "Nc1nc2[nH]cnc2c(=O)[nH]1": {
+  "zh": "2-氨基-1H-嘌呤-6(9H)-酮",
+  "en": "2-amino-1H-purin-6(9H)-one",
+  "f": "C5H5N5O"
+ },
+ "c1ccc2cc3ccccc3cc2c1": {
+  "zh": "蒽",
+  "en": "anthracene",
+  "f": "C14H10"
+ },
+ "c1ccc(Cc2ccccc2)cc1": {
+  "zh": "二苯基甲烷",
+  "en": "diphenylmethane",
+  "f": "C13H12"
+ },
+ "c1ccc2c(c1)ccc1ccccc12": {
+  "zh": "菲",
+  "en": "phenanthrene",
+  "f": "C14H10"
+ },
+ "CS(C)=O": {
+  "zh": "甲基亚磺酰基甲烷",
+  "en": "(methanesulfinyl)methane",
+  "f": "C2H6OS"
+ },
+ "Cn1c(=O)c2c(ncn2C)n(C)c1=O": {
+  "zh": "1,3,7-三甲基嘌呤-2,6-二酮",
+  "en": "1,3,7-trimethylpurine-2,6-dione",
+  "f": "C8H10N4O2"
+ },
+ "c1cc2ccc3cccc4ccc(c1)c2c34": {
+  "zh": "芘",
+  "en": "pyrene",
+  "f": "C16H10"
+ },
+ "O=C1C=CC(=O)c2ccccc21": {
+  "zh": "萘-1,4-二酮",
+  "en": "naphthalene-1,4-dione",
+  "f": "C10H6O2"
+ },
+ "c1ccc2c(c1)Cc1ccccc1-2": {
+  "zh": "9H-芴",
+  "en": "9H-fluorene",
+  "f": "C13H10"
+ },
+ "O=C1C=CC(=O)C=C1": {
+  "zh": "环己-2,5-二烯-1,4-二酮",
+  "en": "cyclohexa-2,5-diene-1,4-dione",
+  "f": "C6H4O2"
+ },
+ "NCC(=O)O": {
+  "zh": "2-氨基乙酸",
+  "en": "2-aminoacetic acid",
+  "f": "C2H5NO2"
+ },
+ "CC(N)C(=O)O": {
+  "zh": "2-氨基丙酸",
+  "en": "2-aminopropanoic acid",
+  "f": "C3H7NO2"
+ },
+ "NC(Cc1ccccc1)C(=O)O": {
+  "zh": "2-氨基-3-苯基丙酸",
+  "en": "2-amino-3-phenylpropanoic acid",
+  "f": "C9H11NO2"
+ },
+ "C1C2CC3CC1CC(C2)C3": {
+  "zh": "三环[3.3.1.1³,⁷]癸烷",
+  "en": "tricyclo[3.3.1.1^{3,7}]decane",
+  "f": "C10H16"
+ },
+ "C=C(C)C1CC=C(C)CC1": {
+  "zh": "1-甲基-4-(丙-1-烯-2-基)环己-1-烯",
+  "en": "1-methyl-4-(prop-1-en-2-yl)cyclohex-1-ene",
+  "f": "C10H16"
+ },
+ "NC(CO)C(=O)O": {
+  "zh": "2-氨基-3-羟基丙酸",
+  "en": "2-amino-3-hydroxypropanoic acid",
+  "f": "C3H7NO3"
+ },
+ "CC(=O)Nc1ccc(O)cc1": {
+  "zh": "N-(4-羟基苯基)乙酰胺",
+  "en": "N-(4-hydroxyphenyl)acetamide",
+  "f": "C8H9NO2"
+ },
+ "NC(CCC(=O)O)C(=O)O": {
+  "zh": "2-氨基戊二酸",
+  "en": "2-aminopentanedioic acid",
+  "f": "C5H9NO4"
+ },
+ "CO": {
+  "zh": "甲醇",
+  "en": "methanol",
+  "f": "CH4O"
+ },
+ "OCC1OC(O)C(O)C(O)C1O": {
+  "zh": "6-(羟甲基)氧杂环己烷-2,3,4,5-四醇",
+  "en": "6-(hydroxymethyl)oxane-2,3,4,5-tetrol",
+  "f": "C6H12O6"
+ },
+ "CCCO": {
+  "zh": "1-丙醇",
+  "en": "propan-1-ol",
+  "f": "C3H8O"
+ },
+ "CC(C)Cc1ccc(C(C)C(=O)O)cc1": {
+  "zh": "2-[4-(2-甲基丙基)苯基]丙酸",
+  "en": "2-[4-(2-methylpropyl)phenyl]propanoic acid",
+  "f": "C13H18O2"
+ },
+ "OCCO": {
+  "zh": "乙烷-1,2-二醇",
+  "en": "ethane-1,2-diol",
+  "f": "C2H6O2"
+ },
+ "OCC1OC(O)(CO)C(O)C1O": {
+  "zh": "2,5-双(羟甲基)氧杂环戊烷-2,3,4-三醇",
+  "en": "2,5-bis(hydroxymethyl)oxolane-2,3,4-triol",
+  "f": "C6H12O6"
+ },
+ "Oc1ccccc1": {
+  "zh": "苯酚",
+  "en": "phenol",
+  "f": "C6H6O"
+ },
+ "CC(O)CO": {
+  "zh": "丙烷-1,2-二醇",
+  "en": "propane-1,2-diol",
+  "f": "C3H8O2"
+ },
+ "Oc1ccccc1O": {
+  "zh": "1,2-二羟基苯",
+  "en": "benzene-1,2-diol",
+  "f": "C6H6O2"
+ },
+ "OCC(O)CO": {
+  "zh": "1,2,3-丙三醇",
+  "en": "propane-1,2,3-triol",
+  "f": "C3H8O3"
+ },
+ "Oc1cccc(O)c1": {
+  "zh": "1,3-二羟基苯",
+  "en": "benzene-1,3-diol",
+  "f": "C6H6O2"
+ },
+ "Oc1ccc(O)cc1": {
+  "zh": "1,4-二羟基苯",
+  "en": "benzene-1,4-diol",
+  "f": "C6H6O2"
+ },
+ "C=O": {
+  "zh": "甲醛",
+  "en": "methanal",
+  "f": "CH2O"
+ },
+ "CC=O": {
+  "zh": "乙醛",
+  "en": "ethanal",
+  "f": "C2H4O"
+ },
+ "O=Cc1ccccc1": {
+  "zh": "苯甲醛",
+  "en": "benzaldehyde",
+  "f": "C7H6O"
+ },
+ "OCc1ccccc1": {
+  "zh": "苯甲醇",
+  "en": "phenylmethanol",
+  "f": "C7H8O"
+ },
+ "O=C1CCCCC1": {
+  "zh": "环己酮",
+  "en": "cyclohexanone",
+  "f": "C6H10O"
+ },
+ "CC(C)O": {
+  "zh": "丙-2-醇",
+  "en": "propan-2-ol",
+  "f": "C3H8O"
+ },
+ "CC(C)=O": {
+  "zh": "丙-2-酮",
+  "en": "propan-2-one",
+  "f": "C3H6O"
+ },
+ "CCOC(C)=O": {
+  "zh": "乙酸乙酯",
+  "en": "ethyl acetate",
+  "f": "C4H8O2"
+ },
+ "COC(C)=O": {
+  "zh": "乙酸甲酯",
+  "en": "methyl ethanoate",
+  "f": "C3H6O2"
+ },
+ "Nc1ccccc1": {
+  "zh": "苯胺",
+  "en": "aniline",
+  "f": "C6H7N"
+ },
+ "O=[N+]([O-])c1ccccc1": {
+  "zh": "硝基苯",
+  "en": "nitrobenzene",
+  "f": "C6H5NO2"
+ },
+ "CC#N": {
+  "zh": "乙腈",
+  "en": "acetonitrile",
+  "f": "C2H3N"
+ },
+ "N#Cc1ccccc1": {
+  "zh": "苯甲腈",
+  "en": "benzonitrile",
+  "f": "C7H5N"
+ },
+ "CC(=O)c1ccccc1": {
+  "zh": "1-苯基乙-1-酮",
+  "en": "1-phenylethan-1-one",
+  "f": "C8H8O"
+ },
+ "c1c[nH]cn1": {
+  "zh": "1H-咪唑",
+  "en": "1H-imidazole",
+  "f": "C3H4N2"
+ },
+ "c1cn[nH]c1": {
+  "zh": "1H-吡唑",
+  "en": "1H-pyrazole",
+  "f": "C3H4N2"
+ },
+ "c1ccc2[nH]ccc2c1": {
+  "zh": "1H-吲哚",
+  "en": "1H-indole",
+  "f": "C8H7N"
+ },
+ "NC(N)=O": {
+  "zh": "尿素",
+  "en": "urea",
+  "f": "CH4N2O"
+ },
+ "c1ccc2[nH]cnc2c1": {
+  "zh": "1H-苯并咪唑",
+  "en": "1H-benzimidazole",
+  "f": "C7H6N2"
+ },
+ "c1cncnc1": {
+  "zh": "嘧啶",
+  "en": "pyrimidine",
+  "f": "C4H4N2"
+ },
+ "O=c1cc[nH]c(=O)[nH]1": {
+  "zh": "嘧啶-2,4(1H,3H)-二酮",
+  "en": "pyrimidine-2,4(1H,3H)-dione",
+  "f": "C4H4N2O2"
+ },
+ "c1cnccn1": {
+  "zh": "吡嗪",
+  "en": "pyrazine",
+  "f": "C4H4N2"
+ },
+ "CCc1ccccc1": {
+  "zh": "乙基苯",
+  "en": "ethylbenzene",
+  "f": "C8H10"
+ },
+ "Cc1ccccc1C": {
+  "zh": "1,2-二甲基苯",
+  "en": "1,2-dimethylbenzene",
+  "f": "C8H10"
+ },
+ "C1CCCC1": {
+  "zh": "环戊烷",
+  "en": "cyclopentane",
+  "f": "C5H10"
+ },
+ "C1CCCCC1": {
+  "zh": "环己烷",
+  "en": "cyclohexane",
+  "f": "C6H12"
+ },
+ "CC(C)c1ccccc1": {
+  "zh": "丙-2-基苯",
+  "en": "propan-2-ylbenzene",
+  "f": "C9H12"
+ },
+ "C1CCOC1": {
+  "zh": "氧杂环戊烷",
+  "en": "oxolane",
+  "f": "C4H8O"
+ },
+ "C1=CCCCC1": {
+  "zh": "环己烯",
+  "en": "cyclohexene",
+  "f": "C6H10"
+ },
+ "C1COCCO1": {
+  "zh": "1,4-二氧杂环己烷",
+  "en": "1,4-dioxane",
+  "f": "C4H8O2"
+ },
+ "Cc1c[nH]c(=O)[nH]c1=O": {
+  "zh": "5-甲基嘧啶-2,4(1H,3H)-二酮",
+  "en": "5-methylpyrimidine-2,4(1H,3H)-dione",
+  "f": "C5H6N2O2"
+ },
+ "OCC1OCC(O)C1O": {
+  "zh": "2-(羟甲基)氧杂环戊烷-3,4-二醇",
+  "en": "2-(hydroxymethyl)oxolane-3,4-diol",
+  "f": "C5H10O4"
+ },
+ "c1ncc2nc[nH]c2n1": {
+  "zh": "9H-嘌呤",
+  "en": "9H-purine",
+  "f": "C5H4N4"
+ },
+ "C1OC2COCC1CO2": {
+  "zh": "3,6,9-三氧杂双环[3.2.2]壬烷",
+  "en": "3,6,9-trioxabicyclo[3.2.2]nonane",
+  "f": "C6H10O3"
+ },
+ "N=C1CC=CCCCO1": {
+  "zh": "3,6,7,8-四氢-2H-氧杂环辛烯-2-亚胺",
+  "en": "3,6,7,8-tetrahydro-2H-oxocin-2-imine",
+  "f": "C7H11NO"
+ },
+ "OCC1CC(O)CO1": {
+  "zh": "2-(羟甲基)氧杂环戊烷-4-醇",
+  "en": "2-(hydroxymethyl)oxolan-4-ol",
+  "f": "C5H10O3"
+ },
+ "OC1CNC1C#CC=O": {
+  "zh": "3-(3-羟基氮杂环丁烷-2-基)丙-2-炔醛",
+  "en": "3-(3-hydroxyazetidin-2-yl)prop-2-ynal",
+  "f": "C6H7NO2"
+ },
+ "N#CC12CC1NC2": {
+  "zh": "2-氮杂双环[2.1.0]戊烷-4-甲腈",
+  "en": "2-azabicyclo[2.1.0]pentane-4-carbonitrile",
+  "f": "C5H6N2"
+ },
+ "CC1NC1(CO)CC=O": {
+  "zh": "2-[2-(羟甲基)-3-甲基氮丙啶-2-基]乙醛",
+  "en": "2-[2-(hydroxymethyl)-3-methylaziridin-2-yl]ethanal",
+  "f": "C6H11NO2"
+ },
+ "OC1(CC1)C(C#C)C#N": {
+  "zh": "2-(1-羟基环丙基)丁-3-炔腈",
+  "en": "2-(1-hydroxycyclopropyl)but-3-ynenitrile",
+  "f": "C7H7NO"
+ },
+ "CC#CC1(C)NC1C": {
+  "zh": "2,3-二甲基-2-(丙-1-炔-1-基)氮杂环丙烷",
+  "en": "2,3-dimethyl-2-(prop-1-yn-1-yl)aziridine",
+  "f": "C7H11N"
+ },
+ "CC(CN)(OC=O)C#N": {
+  "zh": "甲酸(1-氨基-2-氰基丙-2-基)酯",
+  "en": "1-amino-2-cyanopropan-2-yl methanoate",
+  "f": "C5H8N2O2"
+ },
+ "CC12CC1CC(C)(C)C2": {
+  "zh": "1,3,3-三甲基双环[3.1.0]己烷",
+  "en": "1,3,3-trimethylbicyclo[3.1.0]hexane",
+  "f": "C9H16"
+ },
+ "C1CC(=O)C(=C1)NC=O": {
+  "zh": "N-(5-氧代环戊-1-烯-1-基)甲酰胺",
+  "en": "N-(5-oxocyclopent-1-en-1-yl)formamide",
+  "f": "C6H7NO2"
+ },
+ "N#CC1=CC2C3OC2C13": {
+  "zh": "6-氧杂三环[3.2.0.0^{4,7}]庚-2-烯-2-甲腈",
+  "en": "6-oxatricyclo[3.2.0.0^{4,7}]hept-2-ene-2-carbonitrile",
+  "f": "C7H5NO"
+ },
+ "C": {
+  "zh": "甲烷",
+  "en": "methane",
+  "f": "CH4"
+ },
+ "c1c(c(=O)c(no1)F)N": {
+  "zh": "5-氨基-3-氟-4H-1,2-噁嗪-4-酮",
+  "en": "5-amino-3-fluoro-4H-1,2-oxazin-4-one",
+  "f": "C4H3FN2O2"
+ },
+ "CC": {
+  "zh": "乙烷",
+  "en": "ethane",
+  "f": "C2H6"
+ },
+ "C#C": {
+  "zh": "乙炔",
+  "en": "ethyne",
+  "f": "C2H2"
+ },
+ "C(=O)N": {
+  "zh": "甲酰胺",
+  "en": "formamide",
+  "f": "CH3NO"
+ },
+ "CCC": {
+  "zh": "丙烷",
+  "en": "propane",
+  "f": "C3H8"
+ },
+ "N": {
+  "zh": "氮烷",
+  "en": "azane",
+  "f": "H3N"
+ },
+ "COC": {
+  "zh": "甲氧基甲烷",
+  "en": "methoxymethane",
+  "f": "C2H6O"
+ },
+ "CC#C": {
+  "zh": "丙-1-炔",
+  "en": "prop-1-yne",
+  "f": "C3H4"
+ },
+ "CC(C)C": {
+  "zh": "2-甲基丙烷",
+  "en": "2-methylpropane",
+  "f": "C4H10"
+ },
+ "O": {
+  "zh": "氧烷",
+  "en": "oxidane",
+  "f": "H2O"
+ },
+ "C(#N)C#N": {
+  "zh": "乙二腈",
+  "en": "ethanedinitrile",
+  "f": "C2N2"
+ },
+ "COCC1C2CC(O)C12": {
+  "zh": "5-(甲氧基甲基)双环[2.1.0]戊-2-醇",
+  "en": "5-(methoxymethyl)bicyclo[2.1.0]pentan-2-ol",
+  "f": "C7H12O2"
+ },
+ "CC1(OCCO1)C2CC2": {
+  "zh": "2-环丙基-2-甲基-1,3-二氧戊环",
+  "en": "2-cyclopropyl-2-methyl-1,3-dioxolane",
+  "f": "C7H12O2"
+ },
+ "C(C=O)O": {
+  "zh": "2-羟基乙醛",
+  "en": "2-hydroxyethanal",
+  "f": "C2H4O2"
+ },
+ "c1[nH]ncn1": {
+  "zh": "1H-1,2,4-三唑",
+  "en": "1H-1,2,4-triazole",
+  "f": "C2H3N3"
+ },
+ "COC=O": {
+  "zh": "甲酸甲酯",
+  "en": "methyl methanoate",
+  "f": "C2H4O2"
+ },
+ "C(C#N)C#N": {
+  "zh": "丙二腈",
+  "en": "propanedinitrile",
+  "f": "C3H2N2"
+ },
+ "CC(O)C=O": {
+  "zh": "2-羟基丙醛",
+  "en": "2-hydroxypropanal",
+  "f": "C3H6O2"
+ },
+ "C1CO1": {
+  "zh": "氧杂环丙烷",
+  "en": "oxirane",
+  "f": "C2H4O"
+ },
+ "C1CC1O": {
+  "zh": "环丙醇",
+  "en": "cyclopropanol",
+  "f": "C3H6O"
+ },
+ "CC#CCO": {
+  "zh": "2-丁炔-1-醇",
+  "en": "but-2-yn-1-ol",
+  "f": "C4H6O"
+ },
+ "c1c(c(=O)ocn1)C=O": {
+  "zh": "6-氧代-6H-1,3-噁嗪-5-甲醛",
+  "en": "6-oxo-6H-1,3-oxazine-5-carbaldehyde",
+  "f": "C5H3NO3"
+ },
+ "CCCC1CC1": {
+  "zh": "丙基环丙烷",
+  "en": "propylcyclopropane",
+  "f": "C6H12"
+ },
+ "CC12CCC(OC1)OC2": {
+  "zh": "4-甲基-2,6-二氧杂双环[2.2.2]辛烷",
+  "en": "4-methyl-2,6-dioxabicyclo[2.2.2]octane",
+  "f": "C7H12O2"
+ },
+ "C1C2CC1O2": {
+  "zh": "2-氧杂双环[1.1.1]戊烷",
+  "en": "2-oxabicyclo[1.1.1]pentane",
+  "f": "C4H6O"
+ },
+ "O=CC1CN1": {
+  "zh": "氮丙啶-2-甲醛",
+  "en": "aziridine-2-carbaldehyde",
+  "f": "C3H5NO"
+ },
+ "C(C(F)(F)F)N": {
+  "zh": "2,2,2-三氟乙-1-胺",
+  "en": "2,2,2-trifluoroethan-1-amine",
+  "f": "C2H4F3N"
+ },
+ "CCC(C=O)C=O": {
+  "zh": "2-乙基丙二醛",
+  "en": "2-ethylpropanedial",
+  "f": "C5H8O2"
+ },
+ "Cc1[nH]ncn1": {
+  "zh": "5-甲基-1H-1,2,4-三唑",
+  "en": "5-methyl-1H-1,2,4-triazole",
+  "f": "C3H5N3"
+ },
+ "OCCC(O)C#C": {
+  "zh": "戊-4-炔-1,3-二醇",
+  "en": "pent-4-yne-1,3-diol",
+  "f": "C5H8O2"
+ },
+ "CC12CC1C=CC2": {
+  "zh": "5-甲基双环[3.1.0]己-2-烯",
+  "en": "5-methylbicyclo[3.1.0]hex-2-ene",
+  "f": "C7H10"
+ },
+ "CC(=O)N1CC1": {
+  "zh": "1-乙酰基氮丙啶",
+  "en": "1-acetylaziridine",
+  "f": "C4H7NO"
+ },
+ "Cc1cncnn1": {
+  "zh": "6-甲基-1,2,4-三嗪",
+  "en": "6-methyl-1,2,4-triazine",
+  "f": "C4H5N3"
+ },
+ "c1cc([nH]c1O)O": {
+  "zh": "1H-吡咯-2,5-二醇",
+  "en": "1H-pyrrole-2,5-diol",
+  "f": "C4H5NO2"
+ },
+ "N#CC1OC1C#N": {
+  "zh": "环氧乙烷-2,3-二甲腈",
+  "en": "oxirane-2,3-dicarbonitrile",
+  "f": "C4H2N2O"
+ },
+ "N=C1NC=NO1": {
+  "zh": "1,2,4-噁二唑-5(4H)-亚胺",
+  "en": "1,2,4-oxadiazol-5(4H)-imine",
+  "f": "C2H3N3O"
+ },
+ "c1c(c(c([nH]1)O)O)O": {
+  "zh": "1H-吡咯-2,3,4-三醇",
+  "en": "1H-pyrrole-2,3,4-triol",
+  "f": "C4H5NO3"
+ },
+ "C(=O)(C(=N)N)C(=N)N": {
+  "zh": "2-氧代丙二亚胺酰胺",
+  "en": "2-oxopropanediimidamide",
+  "f": "C3H6N4O"
+ },
+ "c1[nH]nc(n1)N=CN": {
+  "zh": "N'-(1H-1,2,4-三唑-3-基)甲脒",
+  "en": "N'-(1H-1,2,4-triazol-3-yl)methanimidamide",
+  "f": "C3H5N5"
+ },
+ "N=COC1CC1C=O": {
+  "zh": "2-(甲亚胺酰氧基)环丙烷-1-甲醛",
+  "en": "2-(methanimidoyloxy)cyclopropane-1-carbaldehyde",
+  "f": "C5H7NO2"
+ }
+}

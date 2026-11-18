@@ -1,0 +1,55 @@
+{
+  "n_samples": 133802,
+  "tree_std_vs_error_spearman": 0.4452,
+  "tree_std_bins": [
+    {
+      "std_lo": 0.0111,
+      "std_hi": 0.1624,
+      "mean_abs_err": 0.0718,
+      "n": 26761
+    },
+    {
+      "std_lo": 0.1624,
+      "std_hi": 0.2136,
+      "mean_abs_err": 0.1161,
+      "n": 26760
+    },
+    {
+      "std_lo": 0.2136,
+      "std_hi": 0.2651,
+      "mean_abs_err": 0.149,
+      "n": 26760
+    },
+    {
+      "std_lo": 0.2651,
+      "std_hi": 0.3423,
+      "mean_abs_err": 0.1824,
+      "n": 26760
+    },
+    {
+      "std_lo": 0.3423,
+      "std_hi": 2.6789,
+      "mean_abs_err": 0.2919,
+      "n": 26761
+    }
+  ],
+  "conformal": {
+    "q90": {
+      "half_width": 0.3519,
+      "coverage": 0.9
+    },
+    "q95": {
+      "half_width": 0.4597,
+      "coverage": 0.95
+    }
+  },
+  "applicability_domain": {
+    "pca_dims": 20,
+    "knn_k": 5,
+    "threshold": 30.2073,
+    "in_domain_ratio": 0.9499,
+    "mae_in_domain": 0.1592,
+    "mae_out_of_domain": 0.2204
+  },
+  "elapsed_sec": 244.2
+}

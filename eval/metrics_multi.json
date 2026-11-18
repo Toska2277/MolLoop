@@ -1,0 +1,114 @@
+{
+  "n_samples": 133802,
+  "n_features": 217,
+  "model": "rf",
+  "config_rf": {
+    "n_estimators": 200,
+    "max_features": 0.5,
+    "min_samples_leaf": 2
+  },
+  "folds": 5,
+  "gap": {
+    "mae": 0.1622,
+    "mae_ci95": [
+      0.1612,
+      0.1631
+    ],
+    "rmse": 0.2495,
+    "r2": 0.9627,
+    "medae": 0.1128,
+    "y_mean": 6.834,
+    "y_std": 1.293,
+    "n": 133802,
+    "unit": "eV",
+    "desc": "HOMO-LUMO 能隙",
+    "elapsed_sec": 198.2
+  },
+  "homo": {
+    "mae": 0.1237,
+    "mae_ci95": [
+      0.1229,
+      0.1245
+    ],
+    "rmse": 0.1822,
+    "r2": 0.9085,
+    "medae": 0.0888,
+    "y_mean": -6.53,
+    "y_std": 0.602,
+    "n": 133802,
+    "unit": "eV",
+    "desc": "最高占据轨道能",
+    "elapsed_sec": 232.6
+  },
+  "lumo": {
+    "mae": 0.1321,
+    "mae_ci95": [
+      0.1313,
+      0.1329
+    ],
+    "rmse": 0.1974,
+    "r2": 0.9761,
+    "medae": 0.0914,
+    "y_mean": 0.304,
+    "y_std": 1.277,
+    "n": 133802,
+    "unit": "eV",
+    "desc": "最低空轨道能",
+    "elapsed_sec": 183.2
+  },
+  "mu": {
+    "mae": 0.5347,
+    "mae_ci95": [
+      0.5313,
+      0.5378
+    ],
+    "rmse": 0.8248,
+    "r2": 0.7095,
+    "medae": 0.3311,
+    "y_mean": 2.706,
+    "y_std": 1.53,
+    "n": 133802,
+    "unit": "Debye",
+    "desc": "偶极矩",
+    "elapsed_sec": 235.6
+  },
+  "alpha": {
+    "mae": 0.0923,
+    "mae_ci95": [
+      0.0916,
+      0.093
+    ],
+    "rmse": 0.1658,
+    "r2": 0.9813,
+    "medae": 0.0613,
+    "y_mean": 11.142,
+    "y_std": 1.213,
+    "n": 133802,
+    "unit": "Å³",
+    "desc": "极化率",
+    "elapsed_sec": 198.7
+  },
+  "cv": {
+    "mae": 0.2398,
+    "mae_ci95": [
+      0.238,
+      0.2413
+    ],
+    "rmse": 0.3854,
+    "r2": 0.991,
+    "medae": 0.1629,
+    "y_mean": 31.603,
+    "y_std": 4.062,
+    "n": 133802,
+    "unit": "cal/(mol·K)",
+    "desc": "热容",
+    "elapsed_sec": 188.5
+  },
+  "consistency": {
+    "label_true_vs_rel_mae": 0.0007,
+    "direct_gap_mae": 0.1622,
+    "homo_lumo_diff_mae": 0.1759,
+    "note": "标签层面 gap 与 (lumo-homo) 的差应接近 0；两条建模路线的 MAE 越接近，说明模型学到物理关系"
+  },
+  "elapsed_total_sec": 1237.4
+}
