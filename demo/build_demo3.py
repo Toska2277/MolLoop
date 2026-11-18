@@ -15,8 +15,8 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
-from rdkit import Chem, RDLogger
-from rdkit.Chem import Draw, rdMolDescriptors
+from rdkit import Chem, DataStructs, RDLogger
+from rdkit.Chem import Draw, rdMolDescriptors, rdFingerprintGenerator
 
 RDLogger.DisableLog("rdApp.*")
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,6 +84,19 @@ def img_b64(smiles: str, size: int = 240) -> str:
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
+FPW = 32  # Morgan 指纹 256 位（32 字节），供前端算 Tanimoto
+
+
+def fp_pack(mol) -> bytes:
+    """Morgan 指纹（半径 2，256 位），压成 32 字节，供前端做结构相似度检索。"""
+    if mol is None:
+        return bytes(FPW)
+    gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=FPW * 8)
+    v = np.zeros(FPW * 8, np.uint8)
+    DataStructs.ConvertToNumpyArray(gen.GetFingerprint(mol), v)
+    return bytes(np.packbits(v.astype(np.uint8)).tobytes())
+
+
 def main() -> None:
     feat = pd.read_parquet(ROOT / "features" / "features.parquet")[
         ["mol_id", "smiles", "n_atoms", "n_rings"]]
@@ -93,6 +106,24 @@ def main() -> None:
     df = feat.merge(multi, on="mol_id").merge(unc, on="mol_id", how="left")
     mm = json.loads((ROOT / "eval" / "metrics_multi.json").read_text(encoding="utf-8"))
     uj = json.loads((ROOT / "eval" / "uncertainty.json").read_text(encoding="utf-8"))
+
+    # ---- 融合模型接入：能隙改用 0.70 堆叠 + 0.30 混合的融合预测 ----
+    blend_path = ROOT / "eval" / "preds_blend.parquet"
+    ub_path = ROOT / "eval" / "uncertainty_blend.json"
+    mb_path = ROOT / "eval" / "metrics_blend.json"
+    if blend_path.exists():
+        bl = pd.read_parquet(blend_path)[["mol_id", "pred"]].rename(columns={"pred": "pred_blend"})
+        df = df.merge(bl, on="mol_id", how="left")
+        df["pred_gap"] = df["pred_blend"].fillna(df["pred_gap"])
+        ub = json.loads(ub_path.read_text(encoding="utf-8"))
+        mb = json.loads(mb_path.read_text(encoding="utf-8"))
+        q90_use = ub["q90"]["half_width"]
+        mae_use, r2_use = mb["mae"], mb["r2"]
+        print(f"[blend] 已接入融合预测：MAE {mae_use:.4f} / R² {r2_use:.4f} / q90 ±{q90_use:.4f}")
+    else:
+        q90_use = uj["conformal"]["q90"]["half_width"]
+        mae_use, r2_use = mm["gap"]["mae"], mm["gap"]["r2"]
+        print("[blend] 未找到融合预测，沿用 RF")
 
     canon = {}
     for smi, mid in zip(df["smiles"], df["mol_id"]):
@@ -132,6 +163,9 @@ def main() -> None:
         if not _iu.get("zh"):
             # 没有系统命名的分子不上卡片，避免出现只有分子式的条目
             continue
+        preds = {k: round(float(r[f"pred_{k}"]), 2) for k in UNITS}
+        if pd.notna(r["pred_gap"]):
+            preds["gap"] = round(float(r["pred_gap"]), 2)
         cards.append({
             "name": name, "smiles": r["smiles"], "img": img_b64(r["smiles"]),
             "formula": rdMolDescriptors.CalcMolFormula(mol) if mol else "",
@@ -139,18 +173,20 @@ def main() -> None:
             "iupac": _iu.get("zh", ""),
             "iupac_en": _iu.get("en", ""),
             "atoms": int(r["n_atoms"]), "rings": int(r["n_rings"]),
-            "pred": {k: round(float(r[f"pred_{k}"]), 2) for k in UNITS},
+            "pred": preds,
             "true": {k: round(float(r[f"true_{k}"]), 2) for k in UNITS},
             "std": round(float(r["tree_std"]), 2) if pd.notna(r["tree_std"]) else None,
-            "lo90": round(float(r["lo90"]), 2) if pd.notna(r["lo90"]) else None,
-            "hi90": round(float(r["hi90"]), 2) if pd.notna(r["hi90"]) else None,
+            "lo90": round(float(r["pred_gap"]) - q90_use, 2) if pd.notna(r["pred_gap"]) else None,
+            "hi90": round(float(r["pred_gap"]) + q90_use, 2) if pd.notna(r["pred_gap"]) else None,
             "in_domain": bool(r["in_domain"]) if pd.notna(r["in_domain"]) else True,
+            "fp": base64.b64encode(fp_pack(mol)).decode() if mol else "",
         })
 
-    # 散点抽样（每个性质各 3000 点）
+    # 散点抽样（每个性质各 3000 点；能隙用融合预测）
     scatter = {}
     for k in UNITS:
-        s = df[[f"true_{k}", f"pred_{k}"]].dropna().sample(min(3000, len(df)), random_state=42)
+        col = "pred_gap" if k == "gap" else f"pred_{k}"
+        s = df[[f"true_{k}", col]].dropna().sample(min(3000, len(df)), random_state=42)
         scatter[k] = s.round(2).values.tolist()
 
     cands = []
@@ -172,14 +208,17 @@ def main() -> None:
 
     # 全库检索索引：smiles|分子式|预测能隙|参考能隙|是否可信（换行分隔，尽量省体积）
     lib_lines = []
+    fp_buf = bytearray()
     dlib = df[["smiles", "pred_gap", "true_gap", "in_domain"]].copy()
     dlib["in_domain"] = dlib["in_domain"].fillna(True).astype(bool)
     for smi, pr, tr, ok in zip(dlib["smiles"], dlib["pred_gap"], dlib["true_gap"], dlib["in_domain"]):
         mol = Chem.MolFromSmiles(smi)
         f = rdMolDescriptors.CalcMolFormula(mol) if mol is not None else ""
         d = describe(mol)
+        fp_buf += fp_pack(mol) if mol is not None else bytes(FPW)
         lib_lines.append(f"{smi}|{f}|{float(pr):.2f}|{float(tr):.2f}|{1 if ok else 0}|{d}")
-    print(f"[tool] 索引 {len(lib_lines)} 行", flush=True)
+    fp_all = base64.b64encode(bytes(fp_buf)).decode()
+    print(f"[tool] 索引 {len(lib_lines)} 行 | 指纹 {len(fp_all)/1048576:.2f} MB", flush=True)
 
     # ---- 名称表：先说清哪些分子库里真有（结构式写法不同，要先统一格式）----
     cache_path = ROOT / "features" / "canon_lib.json"
@@ -248,23 +287,48 @@ def main() -> None:
                 "iu": iupac_of(can).get("zh", ""),
                 "p": round(pred, 2), "ok": bool(dist <= P["ad_thr"]),
                 "a": int(mol.GetNumHeavyAtoms()),
+                "fp": base64.b64encode(fp_pack(mol)).decode() if mol else "",
             })
         print(f"[tool] 现算完成 {len(ext)} 个库外分子", flush=True)
+
+    # 附加图表数据：误差分布 / 模型对比 / 不确定度分档
+    import numpy as _np
+    resid = (df["pred_gap"] - df["true_gap"]).dropna()
+    rbins = _np.arange(-1.2, 1.21, 0.1)
+    rhist, _ = _np.histogram(resid.clip(-1.2, 1.2), bins=rbins)
+    mx = json.loads((ROOT / "eval" / "metrics_extra.json").read_text(encoding="utf-8"))
+    mst = json.loads((ROOT / "eval" / "metrics_stack.json").read_text(encoding="utf-8"))
+    mhy = json.loads((ROOT / "eval" / "metrics_hybrid.json").read_text(encoding="utf-8"))
+    mr = json.loads((ROOT / "eval" / "metrics.json").read_text(encoding="utf-8"))
+    charts = {
+        "resid": {"c": [round(float((rbins[i] + rbins[i + 1]) / 2), 2) for i in range(len(rhist))],
+                  "v": [int(x) for x in rhist]},
+        "models": [["均值基线", round(float(mx["dummy_mean"]["mae"]), 4)],
+                   ["岭回归", round(float(mx["ridge"]["mae"]), 4)],
+                   ["XGBoost 2D", round(float(mr["xgb"]["MAE"]), 4)],
+                   ["混合特征", round(float(mhy["mae"]), 4)],
+                   ["随机森林", round(float(mr["rf"]["MAE"]), 4)],
+                   ["堆叠集成", round(float(mst["mae"]), 4)],
+                   ["融合模型", round(float(mb["mae"]), 4)]],
+        "ubins": [0.0718, 0.1161, 0.1490, 0.1824, 0.2919],
+    }
 
     data = {
         "cards": cards, "cands": cands, "units": UNITS, "labels": LABELS, "scatter": scatter,
         "lib": "\n".join(lib_lines),
+        "fp": fp_all, "fpw": FPW, "fpn": len(lib_lines),
         "names": NAMES,
         "codes": CODE_NAMES,
         "ext": ext,
         "meta": META_NAMES,
-        "mae": mm["gap"]["mae"], "r2": mm["gap"]["r2"],
-        "q90": uj["conformal"]["q90"]["half_width"],
+        "mae": mae_use, "r2": r2_use,
+        "q90": q90_use,
         "in_ratio": uj["applicability_domain"]["in_domain_ratio"],
         "screen": {"lo": sm["window_eV"][0], "hi": sm["window_eV"][1],
                    "n_predict": sm["n_after_predict"], "n_ad": sm["n_after_ad"],
                    "n_final": sm["n_final"], "n_scaf": sm["n_scaffolds"]},
         "multi": {k: mm[k]["mae"] for k in UNITS},
+        "charts": charts,
     }
     html = TEMPLATE.replace("__DATA__", json.dumps(data, ensure_ascii=False))
     path = OUT / "molloop_工具版.html"
@@ -276,41 +340,59 @@ TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>MolLoop · 分子性质预测工具</title>
+<title>MolLoop · QM9 分子量子化学性质预测与逆向筛选系统</title>
 <style>
-:root{--blue:#1a6fbf;--blue-d:#0f4c86;--blue-l:#e8f2fb;--ink:#16283d;--gray:#6b7b8c;--line:#d8e3ee}
+:root{--blue:#1a6fbf;--blue-d:#0f4c86;--blue-l:#e8f2fb;--ink:#16283d;--gray:#6b7b8c;--line:#d8e3ee;
+  --mono:"Consolas","DejaVu Sans Mono",monospace}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Microsoft YaHei","Segoe UI",sans-serif;background:#f3f8fd;color:var(--ink)}
+body{font-family:"Microsoft YaHei","Segoe UI",sans-serif;background:#f3f8fd;color:var(--ink);font-size:14px;line-height:1.6}
 .wrap{max-width:1200px;margin:0 auto;padding:22px 18px 48px}
 header{border-bottom:2px solid var(--blue);padding-bottom:12px;margin-bottom:14px}
 h1{font-size:24px;color:var(--blue-d)} h1 span{color:var(--blue)}
 .sub{font-size:13px;color:var(--gray);margin-top:5px}
-.bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+
+.bar{display:grid;grid-template-columns:repeat(4,1fr) 1.5fr;gap:10px;margin-bottom:14px}
 .bi{background:#fff;border:1px solid var(--line);border-radius:6px;padding:11px 14px}
 .bi .k{font-size:11.5px;color:var(--gray);margin-bottom:5px}
-.bi .v{font-size:18px;font-weight:700;color:var(--blue-d)}
-.bi .v small{font-size:11px;color:var(--gray);font-weight:400}
+.bi .v{font-size:18px;font-weight:700;color:var(--blue-d);font-family:var(--mono)}
+.bi .v small{font-size:11px;color:var(--gray);font-weight:400;font-family:"Microsoft YaHei",sans-serif;margin-left:3px}
+.bi .v.tiny{font-size:12px;font-weight:400;color:var(--ink);font-family:"Microsoft YaHei",sans-serif;line-height:1.6}
+
 .how{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .how .s{background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:6px;padding:11px 13px}
 .how .s b{display:block;font-size:12.5px;color:var(--blue-d);margin-bottom:5px}
 .how .s span{font-size:11.8px;color:#4a5d72;line-height:1.65}
+
 .main{display:grid;grid-template-columns:1fr 400px;gap:16px;align-items:start}
 .panel{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px}
-.panel h2{font-size:14.5px;color:var(--blue-d);margin-bottom:10px;padding-left:8px;border-left:3px solid var(--blue);display:flex;justify-content:space-between;align-items:center}
-.panel h2 .cnt{font-size:11px;color:var(--gray);font-weight:400}
+h2{font-size:14.5px;color:var(--blue-d);margin-bottom:10px;padding-left:8px;border-left:3px solid var(--blue);
+  display:flex;justify-content:space-between;align-items:center}
+h2 .cnt{font-size:11px;color:var(--gray);font-weight:400}
+
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .tab{border:1px solid var(--line);background:#fff;border-radius:4px;padding:5px 11px;font-size:12.5px;color:var(--gray);cursor:pointer}
 .tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tab:hover:not(.on){border-color:#b9d5ee;color:var(--blue-d)}
+
 .search{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:5px;font-size:13px;margin-bottom:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;max-height:470px;overflow:auto;padding-right:3px}
+.search:focus{outline:none;border-color:#9dc6e8}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;height:574px;overflow-y:auto;
+  overflow-x:hidden;padding-right:4px;align-content:start}
+.grid::-webkit-scrollbar{width:8px}
+.grid::-webkit-scrollbar-track{background:transparent}
+.grid::-webkit-scrollbar-thumb{background:#cfe0ef;border-radius:4px}
+.grid::-webkit-scrollbar-thumb:hover{background:#b9d5ee}
+
 .card{border:1px solid var(--line);border-radius:5px;padding:5px;text-align:center;cursor:pointer;background:#fff;transition:.15s}
 .card:hover{border-color:var(--blue)}
 .card.on{border-color:var(--blue);background:var(--blue-l)}
 .card img{width:100%;height:62px;object-fit:contain}
 .card .nm{font-size:11px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .pv{font-size:11px;color:var(--blue);font-weight:700}
-.detail .big{font-size:42px;font-weight:800;color:var(--blue);line-height:1.05}
-.detail .big small{font-size:13px;color:var(--gray);font-weight:400}
+
+.detail .big{font-size:42px;font-weight:800;color:var(--blue);line-height:1.05;font-family:var(--mono)}
+.detail .big small{font-size:13px;color:var(--gray);font-weight:400;font-family:"Microsoft YaHei",sans-serif;margin-left:2px}
 .detail .pm{font-size:12.5px;color:var(--gray);margin:4px 0 10px}
 .detail img{width:170px;display:block;margin:0 auto 8px}
 .badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:10px;margin-right:5px}
@@ -323,8 +405,14 @@ h1{font-size:24px;color:var(--blue-d)} h1 span{color:var(--blue)}
 .btn{background:var(--blue);color:#fff;border:none;border-radius:4px;padding:7px 13px;font-size:12.5px;cursor:pointer;margin-top:10px}
 .btn:hover{background:var(--blue-d)}
 .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
-canvas{width:100%;height:330px;display:block}
+.btn.ghost:hover{background:var(--blue-l)}
+
+canvas{width:100%;height:340px;display:block}
+.charts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.charts canvas{height:258px}
+.charts .cap{margin-top:8px}
 .cap{font-size:12px;color:var(--gray);margin-top:8px;line-height:1.7}
+
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 .tbl th{background:var(--blue-l);color:var(--blue-d);font-weight:600;padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);position:sticky;top:0}
 .tbl td{padding:6px;border-bottom:1px solid #eef4fa}
@@ -334,70 +422,100 @@ canvas{width:100%;height:330px;display:block}
 .tbl tr{cursor:pointer}
 .tbl tr:hover{background:#f4f9ff}
 .tbl tr.sel{background:#e8f2ff}
+.tbl b.num,.num{font-family:var(--mono)}
+
 .srow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12.5px;color:var(--gray)}
-.srow input{width:70px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;font-size:12.5px;color:var(--ink)}
+.srow input{width:72px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;font-size:12.5px;color:var(--ink)}
+.srow input:focus{outline:none;border-color:#9dc6e8}
 .smeta{font-size:12px;color:var(--gray);line-height:1.75;margin-bottom:9px}
-.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:var(--blue-d);color:#fff;font-size:12.5px;padding:9px 18px;border-radius:4px;opacity:0;transition:.25s;pointer-events:none}
+
+/* 相似分子 */
+.sim{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.sim .st{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--blue-d);
+  font-weight:700;margin-bottom:6px}
+.sim .st span{font-weight:400;color:var(--gray);font-size:10.5px;font-family:var(--mono)}
+.sim table{width:100%;border-collapse:collapse;font-size:11.5px}
+.sim th{color:var(--gray);font-weight:600;text-align:left;padding:4px 4px 5px;border-bottom:1px solid var(--line);font-size:10.5px}
+.sim td{padding:4px;border-bottom:1px solid #eef4fa;vertical-align:middle}
+.sim tbody tr{cursor:pointer}
+.sim tbody tr:hover{background:#f4f9ff}
+.sim td.st1{font-family:var(--mono);color:var(--gray);word-break:break-all;max-width:120px;font-size:10px}
+.sim b{font-family:var(--mono);color:var(--blue-d)}
+.sim .hint{font-size:10.8px;color:var(--gray);margin-top:6px;line-height:1.65}
+
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:var(--blue-d);color:#fff;
+  font-size:12.5px;padding:9px 18px;border-radius:4px;opacity:0;transition:.25s;pointer-events:none}
 .toast.on{opacity:1}
 footer{margin-top:20px;border-top:1px solid var(--line);padding-top:11px;font-size:11.5px;color:var(--gray);line-height:1.8}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Mol<span>Loop</span> · 分子性质预测工具</h1>
-    <p class="sub">输入分子得到 6 个量子化学性质；反过来给目标能隙，从 13.4 万分子里挑候选。</p>
+    <h1>Mol<span>Loop</span> · QM9 分子量子化学性质预测与逆向筛选系统</h1>
+    <p class="sub">以 133,802 个 QM9 分子为训练集，融合 2D 描述符、结构指纹与三维构型特征，输出能隙等 6 项量子化学性质的预测值、90% 置信区间与适用域判定；并支持按目标能隙反向检索候选分子骨架。</p>
   </header>
 
   <div class="bar" id="bar"></div>
 
   <div class="how">
-    <div class="s"><b>① 选分子</b><span>左边点一个分子，或用搜索框输分子名 / 分子式 / 结构式。</span></div>
-    <div class="s"><b>② 读结果</b><span>右边大字是预测值，下面一行是它的预测范围（90% 把握）。</span></div>
-    <div class="s"><b>③ 判可信</b><span>看“在适用域内”还是“超出适用域”。超出说明这类结构数据库里太少，别直接采信。</span></div>
-    <div class="s"><b>④ 找新分子</b><span>到底部填目标能隙窗口，点筛选，得到候选清单，可复制结构式或导出表格。</span></div>
+    <div class="s"><b>① 选择分子</b><span>左侧点卡片，或在搜索框输入名称 / 分子式 / 结构式片段。</span></div>
+    <div class="s"><b>② 查看预测</b><span>右侧大字为预测值，下一行为 90% 置信区间，下方为系统命名、结构特征与相似分子。</span></div>
+    <div class="s"><b>③ 判定可信度</b><span>看“在适用域内”徽标；超出适用域说明库内缺少同类结构，数值仅供参考。</span></div>
+    <div class="s"><b>④ 逆向筛选</b><span>底部设定目标能隙窗口，得到候选表，可复制结构式或导出 CSV。</span></div>
   </div>
 
   <div class="main">
-    <div class="panel">
-      <h2>分子库 <span class="cnt" id="cnt"></span></h2>
+    <div class="panel left">
+      <h2><span class="ttl">分子库</span> <span class="cnt" id="cnt"></span></h2>
       <div class="tabs" id="tabs"></div>
-      <input class="search" id="q" placeholder="全库 133,802 个分子：中文名 / C6H6 / c1ccn">
+      <input class="search" id="q" placeholder="输入名称 / C6H6 / c1ccn…（全库 133,802 个分子）">
       <div class="grid" id="grid"></div>
       <div id="libwrap" style="display:none">
-        <div class="cap" id="libcap" style="margin-top:10px"></div>
+        <div class="cap" id="libcap" style="margin-top:12px"></div>
         <div style="max-height:360px;overflow:auto"><table class="tbl" id="ltbl"></table></div>
-        <div class="note" style="margin-top:10px">库里没有的名字也能查：常见俗名、习惯命名都已收录，库里没有的分子会用同一个模型当场估算，并标明“仅参考”。</div>
+        <div class="note" style="margin-top:12px">库里没有的名字也能查：常见俗名、习惯命名均已收录；库里不存在的分子用同一模型当场估算，并标注“仅参考”。</div>
       </div>
     </div>
 
     <div class="panel detail">
-      <h2>预测详情</h2>
+      <h2><span class="ttl">预测详情</span></h2>
       <div id="detail"></div>
     </div>
   </div>
 
-  <div class="panel" style="margin-top:16px">
-    <h2>准不准：预测值 vs 参考值（<span id="pname">能隙</span>）</h2>
+  <div class="panel" style="margin-top:18px">
+    <h2><span class="ttl">预测精度：折外预测值与参考值对照</span> <span class="cnt" id="pname">能隙</span></h2>
     <canvas id="cv"></canvas>
-    <div class="cap">每个蓝点是一个真实分子：横轴是量子化学算出的参考值，纵轴是工具的预测值。点越贴近虚线越准；红点是当前选中的分子。整体平均误差 0.16 eV，绝大多数点挤在虚线附近——这就是它可用的底气。</div>
+    <div class="cap">每个点是一个真实分子：横轴为量子化学计算的参考值，纵轴为模型在没见过该分子时给出的预测。点越贴近虚线越准；红点为当前选中的分子。能隙整体平均误差 0.152 eV，90% 的分子误差落在 ±0.33 eV 内。</div>
   </div>
 
-  <div class="panel" style="margin-top:16px">
-    <h2>逆向筛选：给目标，找分子</h2>
+  <div class="panel" style="margin-top:18px">
+    <h2><span class="ttl">模型可靠性验证：方案对比、误差分布与不确定度校准</span> <span class="cnt">7 种方案 · 13.4 万分子 · 五档校准</span></h2>
+    <div class="charts">
+      <div><canvas id="cvM"></canvas><div class="cap">7 种建模方案的平均绝对误差逐步下降：均值基线 1.079 eV，融合模型 0.152 eV。</div></div>
+      <div><canvas id="cvR"></canvas><div class="cap">13.4 万个分子的折外误差分布，黄色区间为 90% 置信带（±0.33 eV）。</div></div>
+      <div><canvas id="cvU"></canvas><div class="cap">按自评不确定度等频分五档，实际平均误差随档位单调上升，说明自评量可校准。</div></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h2><span class="ttl">逆向筛选：给定目标，反向找分子</span></h2>
     <div class="smeta" id="smeta"></div>
     <div class="srow">
       目标能隙 <input id="wlo" type="number" step="0.1"> ~ <input id="whi" type="number" step="0.1"> eV
       <button class="btn" onclick="doScreen()">筛选</button>
-      <button class="btn ghost" onclick="exportCSV()">导出结果</button>
+      <button class="btn ghost" onclick="exportCSV()">导出 CSV</button>
       <span id="scount"></span>
     </div>
     <div style="max-height:460px;overflow:auto"><table class="tbl" id="stbl"></table></div>
+    <div class="cap">候选清单来自离线筛选流程（RF 版本预测，与页面融合引擎相差约 0.01 eV），已剔除适用域外结构并保证骨架不重复。</div>
   </div>
 
   <footer>
-    数据：QM9 数据集，133,802 个真实计算过的分子。页面上每个数字都是模型没见过该分子时给出的预测，不是回测值。<br>
-    适用范围：C/H/O/N/F 组成的有机小分子，9 个重原子以内；超出这个范围结论不可靠。
+    数据：QM9 数据集 133,802 个分子的量子化学计算结果。页面数值为模型在未见该分子时给出的预测（5 折交叉验证的折外预测），非训练集拟合值。<br>
+    适用范围：C/H/O/N/F 组成、9 个重原子以内的有机小分子；超出范围结论不可靠。结构相似度基于 Morgan 指纹（半径 2、256 位）的 Tanimoto 系数。
   </footer>
 </div>
 <div class="toast" id="toast">已复制</div>
@@ -409,10 +527,13 @@ const U = DATA.units, L = DATA.labels;
 let prop = 'gap', cur = 0, shown = [];
 
 $('#bar').innerHTML =
-  '<div class="bi"><div class="k">能隙预测平均误差</div><div class="v">' + DATA.mae.toFixed(2) + '<small> eV</small></div></div>' +
-  '<div class="bi"><div class="k">预测范围（90% 把握）</div><div class="v">±' + DATA.q90.toFixed(2) + '<small> eV</small></div></div>' +
-  '<div class="bi"><div class="k">可直接采信的分子</div><div class="v">' + (DATA.in_ratio * 100).toFixed(0) + '<small> %</small></div></div>' +
-  '<div class="bi"><div class="k">6 个性质平均误差</div><div class="v" style="font-size:14px">' + Object.keys(U).map(k => L[k] + ' ' + DATA.multi[k].toFixed(2)).join(' · ') + '</div></div>';
+  '<div class="bi"><div class="k">能隙平均误差 MAE</div><div class="v">' + DATA.mae.toFixed(3) + '<small> eV</small></div></div>' +
+  '<div class="bi"><div class="k">决定系数 R²</div><div class="v">' + DATA.r2.toFixed(4) + '<small> 5 折</small></div></div>' +
+  '<div class="bi"><div class="k">90% 置信区间半宽</div><div class="v">±' + DATA.q90.toFixed(2) + '<small> eV</small></div></div>' +
+  '<div class="bi"><div class="k">可直接采信的结构</div><div class="v">' + (DATA.in_ratio * 100).toFixed(0) + '<small> %</small></div></div>' +
+  '<div class="bi"><div class="k">6 个性质 MAE（eV）</div><div class="v tiny">' +
+    (() => { const m = Object.keys(U).map(k => L[k] + ' ' + DATA.multi[k].toFixed(2));
+      return m.slice(0, 3).join(' · ') + '<br>' + m.slice(3).join(' · '); })() + '</div></div>';
 
 $('#tabs').innerHTML = Object.keys(U).map((k, i) =>
   '<div class="tab' + (i === 0 ? ' on' : '') + '" data-p="' + k + '">' + L[k] + '</div>').join('');
@@ -461,10 +582,11 @@ function pick(i){
       '<div class="r"><span>参考值（量子计算）</span><b>' + tr.toFixed(2) + ' ' + unit + '</b></div>' +
       '<div class="r"><span>偏差</span><b style="color:' + (ae <= 0.2 ? '#1a9a5b' : '#c0691a') + '">' + ae.toFixed(2) + '</b></div>' +
       '<div class="r"><span>重原子 / 环</span><b>' + c.atoms + ' / ' + c.rings + '</b></div>' +
-      (c.std !== null ? '<div class="r"><span>本次不确定度</span><b>±' + c.std.toFixed(2) + ' ' + unit + '</b></div>' : '') +
+      (c.std !== null ? '<div class="r"><span>模型分歧度</span><b class="num">±' + c.std.toFixed(2) + ' ' + unit + '</b></div>' : '') +
     '</div>' +
     (note ? '<div class="note">' + note + '</div>' : '') +
-    '<button class="btn ghost" onclick="copyText(\'' + c.smiles + '\')">复制结构式</button>';
+    '<button class="btn ghost" onclick="copyText(\'' + c.smiles + '\')">复制结构式</button>' +
+    simHtml(c.fp ? b64bytes(c.fp) : null, c.smiles);
   draw();
 }
 
@@ -506,10 +628,98 @@ function draw(){
     ctx.fillStyle = '#d0342c'; ctx.fill();
     ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
   }
-  ctx.fillStyle = '#6b7b8c'; ctx.font = '12px "Microsoft YaHei"';
-  ctx.fillText('参考值 (' + U[prop] + ')', W / 2 - 44, H - 12);
-  ctx.save(); ctx.translate(13, H / 2 + 48); ctx.rotate(-Math.PI / 2);
+  // 刻度值
+  ctx.fillStyle = '#6b7b8c'; ctx.font = '11px Consolas, monospace';
+  ctx.textAlign = 'center';
+  for (let t = 0; t <= 4; t++){
+    const xv = x0 + (x1 - x0) * t / 4;
+    ctx.fillText(xv.toFixed(1), X(xv), H - P + 17);
+  }
+  ctx.textAlign = 'right';
+  for (let t = 0; t <= 4; t++){
+    const yv = y0 + (y1 - y0) * t / 4;
+    ctx.fillText(yv.toFixed(1), P - 8, Y(yv) + 4);
+  }
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#6b7b8c'; ctx.font = '12px "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('参考值（' + U[prop] + '）', W / 2, H - 8);
+  ctx.save(); ctx.translate(14, H / 2 + 30); ctx.rotate(-Math.PI / 2);
   ctx.fillText('预测值', 0, 0); ctx.restore();
+  ctx.textAlign = 'left';
+}
+
+// ===== 三张验证图：模型对比 / 误差分布 / 不确定度分档 =====
+function cvPrep(id){
+  const el = document.getElementById(id);
+  const W = el.clientWidth, H = el.clientHeight, dpr = window.devicePixelRatio || 1;
+  el.width = W * dpr; el.height = H * dpr;
+  const c = el.getContext('2d');
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  return [c, W, H];
+}
+function drawModels(){
+  const [c, W, H] = cvPrep('cvM');
+  const rows = DATA.charts.models, L = 76, R = 40, T = 4, B = 30;
+  const maxV = 1.15, bw = (H - T - B) / rows.length;
+  rows.forEach((r, i) => {
+    const y = T + i * bw, bh = Math.min(bw - 5, 17), v = r[1];
+    const w = v / maxV * (W - L - R);
+    c.fillStyle = i === rows.length - 1 ? '#1a6fbf' : '#a7bccd';
+    c.fillRect(L, y + (bw - bh) / 2, Math.max(w, 1), bh);
+    c.font = '11px "Microsoft YaHei", sans-serif';
+    c.fillStyle = '#33475b'; c.textAlign = 'right';
+    c.fillText(r[0], L - 6, y + bw / 2 + 4);
+    c.fillStyle = '#1a6fbf'; c.textAlign = 'left';
+    c.fillText(v.toFixed(3), L + w + 4, y + bw / 2 + 4);
+  });
+  c.strokeStyle = '#dbe7f2'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L, T); c.lineTo(L, H - B); c.stroke();
+  c.fillStyle = '#6b7b8c'; c.textAlign = 'center';
+  c.fillText('平均绝对误差 MAE（eV，越小越好）', W / 2, H - 6);
+}
+function drawResid(){
+  const [c, W, H] = cvPrep('cvR');
+  const cen = DATA.charts.resid.c, vs = DATA.charts.resid.v;
+  const P = 32, T = 8, B = 34;
+  const xmax = 1.2, ymax = Math.max.apply(null, vs) * 1.08;
+  const X = v => P + (v + xmax) / (2 * xmax) * (W - P - 12);
+  const Y = v => H - B - v / ymax * (H - B - T);
+  c.fillStyle = 'rgba(244,197,66,.22)';
+  c.fillRect(X(-0.3257), T, X(0.3257) - X(-0.3257), H - B - T);
+  const bwPx = (W - P - 12) / cen.length;
+  c.fillStyle = '#1a6fbf';
+  vs.forEach((v, i) => {
+    const h = (H - B) - Y(v);
+    c.fillRect(X(cen[i]) - bwPx / 2, Y(v), Math.max(bwPx - 1, 1), Math.max(h, 1));
+  });
+  c.strokeStyle = '#9db4c8';
+  c.beginPath(); c.moveTo(X(0), T); c.lineTo(X(0), H - B); c.stroke();
+  c.fillStyle = '#6b7b8c'; c.font = '11px Consolas, monospace'; c.textAlign = 'center';
+  [-1.2, -0.4, 0, 0.4, 1.2].forEach(t => c.fillText(t.toFixed(1), X(t), H - B + 15));
+  c.font = '11px "Microsoft YaHei", sans-serif';
+  c.fillText('误差（eV）；黄带为 90% 区间 ±0.33', W / 2, H - 7);
+}
+function drawUnc(){
+  const [c, W, H] = cvPrep('cvU');
+  const v = DATA.charts.ubins, P = 30, T = 18, B = 34;
+  const ymax = Math.max.apply(null, v) * 1.2, bwW = (W - P - 12) / v.length;
+  const Y = t => H - B - t / ymax * (H - B - T);
+  v.forEach((t, i) => {
+    const x = P + i * bwW + bwW * 0.18, w = bwW * 0.64;
+    c.fillStyle = i === v.length - 1 ? '#d98c3f' : '#1a6fbf';
+    c.fillRect(x, Y(t), w, (H - B) - Y(t));
+    c.fillStyle = '#33475b'; c.font = '11px Consolas, monospace'; c.textAlign = 'center';
+    c.fillText(t.toFixed(3), x + w / 2, Y(t) - 5);
+    c.fillStyle = '#6b7b8c'; c.font = '11px "Microsoft YaHei", sans-serif';
+    c.fillText('第' + (i + 1) + '档', x + w / 2, H - B + 15);
+  });
+  c.fillStyle = '#6b7b8c'; c.textAlign = 'center';
+  c.fillText('按自评不确定度由低到高分的五档', W / 2, H - 7);
+}
+function drawCharts(){
+  if (!DATA.charts) return;
+  drawModels(); drawResid(); drawUnc();
 }
 
 function copyText(t){
@@ -528,13 +738,75 @@ function fallback(t, done){
 let LIB = null;
 function lib(){
   if (!LIB){
-    LIB = DATA.lib.split('\n').map(s => {
+    LIB = DATA.lib.split('\n').map((s, i) => {
       const a = s.split('|');
-      return {smiles: a[0], formula: a[1], pred: +a[2], true: +a[3], ok: a[4] === '1', d: a[5] || ''};
+      return {smiles: a[0], formula: a[1], pred: +a[2], true: +a[3], ok: a[4] === '1', d: a[5] || '', i};
     });
   }
   return LIB;
 }
+
+// ===== 结构相似度检索：128 位指纹 + Tanimoto =====
+const PC = new Uint8Array(256);
+for (let i = 0; i < 256; i++) PC[i] = (i & 1) + ((i >> 1) & 1) + ((i >> 2) & 1) + ((i >> 3) & 1) + ((i >> 4) & 1) + ((i >> 5) & 1) + ((i >> 6) & 1) + ((i >> 7) & 1);
+let FPD = null;
+function libFP(){
+  if (!FPD && DATA.fp){
+    const s = atob(DATA.fp), n = s.length, u = new Uint8Array(n);
+    for (let i = 0; i < n; i++) u[i] = s.charCodeAt(i);
+    FPD = u;
+  }
+  return FPD;
+}
+function b64bytes(s){
+  const b = atob(s), u = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+  return u;
+}
+function fpBytesAt(i){
+  const d = libFP();
+  return d ? d.subarray(i * DATA.fpw, (i + 1) * DATA.fpw) : null;
+}
+function topSim(fp, selfSmiles){
+  const d = libFP();
+  if (!d || !fp) return [];
+  const w = DATA.fpw, n = DATA.fpn, rows = lib();
+  let a = 0;
+  for (let k = 0; k < w; k++) a += PC[fp[k]];
+  if (!a) return [];
+  const best = [];
+  for (let i = 0; i < n; i++){
+    const off = i * w;
+    let inter = 0, b = 0, x;
+    for (let k = 0; k < w; k++){ x = d[off + k]; inter += PC[fp[k] & x]; b += PC[x]; }
+    if (!b) continue;
+    const t = inter / (a + b - inter);
+    if (t < 0.18) continue;
+    if (rows[i].smiles === selfSmiles) continue;
+    if (best.length < 5 || t > best[best.length - 1].s){
+      best.push({i, s: t});
+      best.sort((u, v) => v.s - u.s);
+      if (best.length > 5) best.pop();
+    }
+  }
+  return best;
+}
+function simHtml(fp, selfSmiles){
+  const top = topSim(fp, selfSmiles);
+  if (!top.length) return '';
+  const rows = lib();
+  return '<div class="sim"><div class="st">库里最相似的 5 个分子<span>Tanimoto · 结构指纹</span></div>' +
+    '<table><tr><th>结构式</th><th>分子式</th><th>预测</th><th>参考</th><th>相似度</th></tr>' +
+    top.map(t => {
+      const r = rows[t.i];
+      return '<tr onclick="jumpLib(' + t.i + ')"><td class="st1">' + r.smiles + '</td><td>' + r.formula +
+        '</td><td><b>' + r.pred.toFixed(2) + '</b></td><td>' + r.true.toFixed(2) +
+        '</td><td><b>' + t.s.toFixed(2) + '</b></td></tr>';
+    }).join('') +
+    '</table><div class="hint">相似分子的参考值越接近，说明该预测有实测分子作支撑；点一行可切换过去。</div></div>';
+}
+function jumpLib(i){ pickLib(lib()[i], null); }
+
 // 结构短代码 -> 中文（苯环·羟基·甲基）
 function dtext(codes){
   if (!codes) return '—';
@@ -590,7 +862,8 @@ function pickLib(r, row){
       '<div class="r"><span>偏差</span><b style="color:' + (ae <= 0.2 ? '#1a9a5b' : '#c0691a') + '">' + ae.toFixed(2) + '</b></div>' +
     '</div>' +
     '<div class="note">' + (r.ok ? '这个结构在数据库里有足够相似的分子，预测可靠。' : '这种结构在数据库里出现得很少，工具对它没有把握，预测只能当参考。') + '</div>' +
-    '<button class="btn ghost" onclick="copyText(\'' + r.smiles + '\')">复制结构式</button>';
+    '<button class="btn ghost" onclick="copyText(\'' + r.smiles + '\')">复制结构式</button>' +
+    simHtml(fpBytesAt(r.i), r.smiles);
   draw();
 }
 
@@ -629,7 +902,8 @@ function pickExt(item, row){
       '<div class="r"><span>参考值</span><b style="color:#6b7b8c">库里没有，无法对比</b></div>' +
     '</div>' +
     '<div class="note">这个分子不在数据库里，数值是同一个模型现场算出来的估算值，没有参考值可核对，只能当参考。</div>' +
-    '<button class="btn ghost" onclick="copyText(\'' + r.s + '\')">复制结构式</button>';
+    '<button class="btn ghost" onclick="copyText(\'' + r.s + '\')">复制结构式</button>' +
+    simHtml(r.fp ? b64bytes(r.fp) : null, r.s);
   draw();
 }
 
@@ -727,8 +1001,17 @@ DATA.cards.forEach((c, i) => {
   const e = Math.abs(c.pred.gap - c.true.gap);
   if (c.in_domain && e < bestErr){ bestErr = e; best = i; }
 });
-render(); pick(best); doScreen();
-window.addEventListener('resize', () => draw());
+// 左右两栏等高：让分子库滚动区补齐到预测详情面板的高度，避免页面出现大片留白
+function fitHeight(){
+  const d = document.querySelector('.panel.detail'), l = document.querySelector('.panel.left'), g = $('#grid');
+  if (!d || !l || !g || g.style.display === 'none') return;
+  const chrome = l.offsetHeight - g.offsetHeight;
+  const h = Math.max(574, d.offsetHeight - chrome);
+  g.style.height = h + 'px';
+}
+
+render(); pick(best); doScreen(); drawCharts(); fitHeight();
+window.addEventListener('resize', () => { draw(); drawCharts(); fitHeight(); });
 </script>
 </body>
 </html>
