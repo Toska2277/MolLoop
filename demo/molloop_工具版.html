@@ -575,7 +575,11 @@ function render(){
     !q || c.name.toLowerCase().includes(q) || c.formula.toLowerCase().includes(q) ||
     c.smiles.toLowerCase().includes(q));
   $('#cnt').textContent = q ? ('精选 ' + cards.length + ' 个') : (DATA.cards.length + ' 个精选');
-  $('#grid').innerHTML = cards.map(({c, i}) =>
+  // 检索后若精选无结果，收起卡片区；有结果则按内容高度排布，避免左侧出现大片空白
+  var gridEl = $('#grid');
+  gridEl.style.display = (!q || cards.length) ? '' : 'none';
+  if (q){ gridEl.style.height = 'auto'; } else { gridEl.style.height = ''; }
+  if (!q || cards.length) $('#grid').innerHTML = cards.map(({c, i}) =>
     '<div class="card' + (i === cur && !libSel ? ' on' : '') + '" data-i="' + i + '">' +
     '<img src="' + c.img + '"><div class="nm">' + c.name + '</div>' +
     '<div class="pv">' + c.pred[prop].toFixed(2) + '</div></div>').join('');
@@ -667,6 +671,7 @@ DATA.cards.forEach((c, i) => {
 function fitHeight(){
   const d = document.querySelector('.panel.detail'), l = document.querySelector('.panel.left'), g = $('#grid');
   if (!d || !l || !g || g.style.display === 'none') return;
+  if ($('#q').value.trim()){ g.style.height = 'auto'; return; }
   const chrome = l.offsetHeight - g.offsetHeight;
   const h = Math.max(574, d.offsetHeight - chrome);
   g.style.height = h + 'px';
