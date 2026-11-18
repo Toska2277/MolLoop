@@ -122,10 +122,10 @@ footer{margin-top:20px;border-top:1px solid var(--line);padding-top:11px;font-si
   <div class="bar" id="bar"></div>
 
   <div class="how">
-    <div class="s"><b>① 选分子</b><span>左侧点卡片，或在搜索框输入名称 / 分子式 / 结构式片段。</span></div>
-    <div class="s"><b>② 读预测</b><span>右侧大字为预测值，下一行为 90% 置信区间，下方为系统命名、结构特征与相似分子。</span></div>
-    <div class="s"><b>③ 判可信</b><span>看“在适用域内”徽标；超出适用域说明库内缺少同类结构，数值仅供参考。</span></div>
-    <div class="s"><b>④ 找新分子</b><span>底部设定目标能隙窗口，得到候选表，可复制结构式或导出 CSV。</span></div>
+    <div class="s"><b>① 选择分子</b><span>左侧点卡片，或在搜索框输入名称 / 分子式 / 结构式片段。</span></div>
+    <div class="s"><b>② 查看预测</b><span>右侧大字为预测值，下一行为 90% 置信区间，下方为系统命名、结构特征与相似分子。</span></div>
+    <div class="s"><b>③ 判定可信度</b><span>看“在适用域内”徽标；超出适用域说明库内缺少同类结构，数值仅供参考。</span></div>
+    <div class="s"><b>④ 逆向筛选</b><span>底部设定目标能隙窗口，得到候选表，可复制结构式或导出 CSV。</span></div>
   </div>
 
   <div class="main">
@@ -148,17 +148,17 @@ footer{margin-top:20px;border-top:1px solid var(--line);padding-top:11px;font-si
   </div>
 
   <div class="panel" style="margin-top:18px">
-    <h2><span class="ttl">准不准：预测值 vs 参考值</span> <span class="cnt" id="pname">能隙</span></h2>
+    <h2><span class="ttl">预测精度：折外预测值与参考值对照</span> <span class="cnt" id="pname">能隙</span></h2>
     <canvas id="cv"></canvas>
     <div class="cap">每个点是一个真实分子：横轴为量子化学计算的参考值，纵轴为模型在没见过该分子时给出的预测。点越贴近虚线越准；红点为当前选中的分子。能隙整体平均误差 0.152 eV，90% 的分子误差落在 ±0.33 eV 内。</div>
   </div>
 
   <div class="panel" style="margin-top:18px">
-    <h2><span class="ttl">为什么信这个结果：三张验证图</span> <span class="cnt">模型对比 · 误差分布 · 自评不确定度</span></h2>
+    <h2><span class="ttl">模型可靠性验证：方案对比、误差分布与不确定度校准</span> <span class="cnt">7 种方案 · 13.4 万分子 · 五档校准</span></h2>
     <div class="charts">
-      <div><canvas id="cvM"></canvas><div class="cap">7 个方案的平均绝对误差：从均值基线 1.079 eV 一路降到融合模型 0.152 eV。</div></div>
-      <div><canvas id="cvR"></canvas><div class="cap">13.4 万个分子的误差分布，黄带内即 90% 区间 ±0.33 eV。</div></div>
-      <div><canvas id="cvU"></canvas><div class="cap">按模型自评不确定度分五档：自评越不确定，实际误差确实越大。</div></div>
+      <div><canvas id="cvM"></canvas><div class="cap">7 种建模方案的平均绝对误差逐步下降：均值基线 1.079 eV，融合模型 0.152 eV。</div></div>
+      <div><canvas id="cvR"></canvas><div class="cap">13.4 万个分子的折外误差分布，黄色区间为 90% 置信带（±0.33 eV）。</div></div>
+      <div><canvas id="cvU"></canvas><div class="cap">按自评不确定度等频分五档，实际平均误差随档位单调上升，说明自评量可校准。</div></div>
     </div>
   </div>
 
