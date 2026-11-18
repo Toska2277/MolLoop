@@ -1,0 +1,14 @@
+{
+ "n": 133802,
+ "method": "split conformal on OOF residuals",
+ "q90": {
+  "half_width": 0.3257,
+  "coverage": 0.9
+ },
+ "q95": {
+  "half_width": 0.4237,
+  "coverage": 0.95
+ },
+ "mae": 0.1522,
+ "rmse": 0.2342
+}
